@@ -2,6 +2,7 @@ import threading
 import time
 import tracemalloc
 
+import fabric
 from paramiko.client import SSHClient, WarningPolicy
 
 # docker run -d --name=openssh-server -e PASSWORD_ACCESS=true -e USER_NAME=user -e USER_PASSWORD=password -p 2222:2222 lscr.io/linuxserver/openssh-server:latest
@@ -21,25 +22,26 @@ tracemalloc.start()
 
 print("openssh-server needs to be running on 2222")
 
-client = SSHClient()
-client.set_missing_host_key_policy(WarningPolicy)
 
+def make_conn(password):
+    conn = fabric.Connection(
+        host="127.0.0.1", port=2222, user="user", connect_kwargs={"password": password}
+    )
 
-def run(client, password):
-    client.connect("127.0.0.1", port=2222, username="user", password=password)
+    conn.client.set_missing_host_key_policy(WarningPolicy)
 
-    stdin, stdout, stderr = client.exec_command("whoami")
-    output = stdout.readlines()
-    # print(output)
+    return conn
 
 
 def correct():
     print(f"correct password - before run - num of threads: {threading.active_count()}")
 
+    conn = make_conn("password")
+
     for _ in range(0, 5):
-        with client:
+        with conn:
             try:
-                run(client, "password")
+                conn.run("whoami")
             except:
                 pass
 
@@ -51,10 +53,12 @@ def correct():
 def wrong():
     print(f"wrong password - before run - num of threads: {threading.active_count()}")
 
+    conn = make_conn("wrong_password")
+
     for _ in range(0, 5):
-        with client:
+        with conn:
             try:
-                run(client, "wrong_password")
+                conn.run("whoami")
             except:
                 pass
 
@@ -68,15 +72,17 @@ def wrong_stop_thread():
         f"wrong password with stop_thread - before run - num of threads: {threading.active_count()}"
     )
 
+    conn = make_conn("wrong_password")
+
     for _ in range(0, 5):
-        with client:
+        with conn:
             try:
-                run(client, "wrong_password")
+                conn.run("whoami")
             except:
                 pass
             finally:
-                time.sleep(1)
-                client.get_transport().stop_thread()
+                print(f"is_connected: {conn.is_connected}")
+                conn.client.close()
 
     time.sleep(5)
 
