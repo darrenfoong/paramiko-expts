@@ -43,6 +43,8 @@ def correct():
             except:
                 pass
 
+    time.sleep(5)
+
     print(f"correct password - after run - num of threads: {threading.active_count()}")
 
 
@@ -55,6 +57,8 @@ def wrong():
                 run(client, "wrong_password")
             except:
                 pass
+
+    time.sleep(5)
 
     print(f"wrong password - after run - num of threads: {threading.active_count()}")
 
@@ -73,6 +77,8 @@ def wrong_stop_thread():
             finally:
                 time.sleep(1)
                 client.get_transport().stop_thread()
+
+    time.sleep(5)
 
     print(
         f"wrong password with stop_thread - after run - num of threads: {threading.active_count()}"
