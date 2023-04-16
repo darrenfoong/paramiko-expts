@@ -3,7 +3,7 @@ import time
 import tracemalloc
 
 import fabric
-from paramiko.client import SSHClient, WarningPolicy
+from paramiko.client import WarningPolicy
 
 # docker run -d --name=openssh-server -e PASSWORD_ACCESS=true -e USER_NAME=user -e USER_PASSWORD=password -p 2222:2222 lscr.io/linuxserver/openssh-server:latest
 # python3 -m main
