@@ -37,12 +37,11 @@ def correct():
     print(f"correct password - before run - num of threads: {threading.active_count()}")
 
     for _ in range(0, 5):
-        try:
-            run(client, "password")
-        except:
-            pass
-        finally:
-            client.close()
+        with client:
+            try:
+                run(client, "password")
+            except:
+                pass
 
     print(f"correct password - after run - num of threads: {threading.active_count()}")
 
@@ -51,12 +50,11 @@ def wrong():
     print(f"wrong password - before run - num of threads: {threading.active_count()}")
 
     for _ in range(0, 5):
-        try:
-            run(client, "wrong_password")
-        except:
-            pass
-        finally:
-            client.close()
+        with client:
+            try:
+                run(client, "wrong_password")
+            except:
+                pass
 
     print(f"wrong password - after run - num of threads: {threading.active_count()}")
 
@@ -67,14 +65,14 @@ def wrong_stop_thread():
     )
 
     for _ in range(0, 5):
-        try:
-            run(client, "wrong_password")
-        except:
-            pass
-        finally:
-            time.sleep(1)
-            client.get_transport().stop_thread()
-            client.close()
+        with client:
+            try:
+                run(client, "wrong_password")
+            except:
+                pass
+            finally:
+                time.sleep(1)
+                client.get_transport().stop_thread()
 
     print(
         f"wrong password with stop_thread - after run - num of threads: {threading.active_count()}"
