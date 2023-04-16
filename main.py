@@ -16,7 +16,7 @@ from paramiko.client import SSHClient, WarningPolicy
 # wrong password - after run - num of threads: 6
 
 # wrong password with stop_thread - before run - num of threads: 1
-# wrong password with stop_thread - after run - num of threads: 3
+# wrong password with stop_thread - after run - num of threads: 1
 
 tracemalloc.start()
 
